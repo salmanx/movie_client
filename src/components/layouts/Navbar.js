@@ -61,10 +61,8 @@ export default function Navbar() {
               color="inherit"
               noWrap
             >
-              <Link to="/" className={classes.link}>
-                <CameraIcon className={classes.icon} />
-                FMovies
-              </Link>
+              <CameraIcon className={classes.icon} />
+              FMovies
             </Typography>
 
             {auth && (
