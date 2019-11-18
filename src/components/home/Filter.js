@@ -7,6 +7,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import axios from "axios";
 import { apiUrl } from "../../config";
+import { MoviesContext } from "../../context";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,14 +34,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function Filter() {
   const classes = useStyles();
-
   const [anchorCatEl, setAnchorCatEl] = React.useState(null);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [categories, setCategories] = React.useState({ categories: [] });
+  const movies = React.useContext(MoviesContext);
 
   React.useEffect(() => {
     async function fetchCategories() {
-      const data = await axios("http://localhost:3000/categories");
+      const data = await axios(`${apiUrl}/categories`);
       setCategories(data);
     }
     fetchCategories();
@@ -50,8 +51,9 @@ export default function Filter() {
     setAnchorCatEl(event.currentTarget);
   };
 
-  const handleCategoryClose = () => {
+  const handleCategoryClose = cat => {
     setAnchorCatEl(null);
+    if (cat) console.log(movies.data.filter(m => m.category.id === cat.id));
   };
 
   const handleRatingFilterClick = event => {
@@ -80,10 +82,15 @@ export default function Filter() {
             anchorEl={anchorCatEl}
             keepMounted
             open={Boolean(anchorCatEl)}
-            onClose={handleCategoryClose}
+            onClose={() => handleCategoryClose(null)}
           >
             {categories.data.map(cat => (
-              <MenuItem onClick={handleCategoryClose} key={cat.id}>
+              <MenuItem
+                onClick={() => handleCategoryClose(cat)}
+                key={cat.id}
+                value={cat.id}
+                name="category"
+              >
                 {cat.name}
               </MenuItem>
             ))}

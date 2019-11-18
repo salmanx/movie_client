@@ -1,19 +1,18 @@
 import React from "react";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
-import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
+import { fade, makeStyles } from "@material-ui/core/styles";
+import AuthHelperMethods from "../../helpers/AuthHelper";
 
 const useStyles = makeStyles(theme => ({
   grow: {
@@ -73,16 +72,18 @@ const useStyles = makeStyles(theme => ({
       display: "none"
     }
   },
-  menuButton: {},
+
   link: {
-    marginRight: theme.spacing(2),
-    marginTop: theme.spacing(1),
+    marginRight: "15px",
+    marginTop: "10px",
     border: "1px solid #fff",
     height: "30px",
     color: "#fff",
     textTransform: "uppercase",
-    lineHeight: "10px",
+    lineHeight: "14px",
     borderRadius: "5px",
+    fontSize: "15px",
+    fontWeight: "normal",
     padding: theme.spacing(1),
     "&:hover": {
       color: "#fff",
@@ -95,9 +96,11 @@ export default function PrimarySearchAppBar() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const auth = new AuthHelperMethods();
+
+  console.log(auth.loggedIn());
 
   const handleProfileMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -128,7 +131,7 @@ export default function PrimarySearchAppBar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={() => auth.logout()}>Signout</MenuItem>
     </Menu>
   );
 
@@ -143,18 +146,24 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-      <MenuItem>Sign in</MenuItem>
+      {auth.loggedIn() && (
+        <MenuItem onClick={handleProfileMenuOpen}>
+          <IconButton
+            aria-label="account of current user"
+            aria-controls="primary-search-account-menu"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+          <p onClick={() => auth.logout()}>Signout</p>
+        </MenuItem>
+      )}
+      {!auth.loggedIn() && (
+        <MenuItem>
+          <Link to="/signin">Sign in</Link>
+        </MenuItem>
+      )}
     </Menu>
   );
 
@@ -188,21 +197,24 @@ export default function PrimarySearchAppBar() {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-              className="mr-5"
-            >
-              <AccountCircle />
-            </IconButton>
-
-            <Link to="/signin" className={classes.link}>
-              Sign in
-            </Link>
+            {auth.loggedIn() && (
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+                className="mr-5"
+              >
+                <AccountCircle />
+              </IconButton>
+            )}
+            {!auth.loggedIn() && (
+              <Link to="/signin" className={classes.link}>
+                Sign in
+              </Link>
+            )}
           </div>
           <div className={classes.sectionMobile}>
             <IconButton

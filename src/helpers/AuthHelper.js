@@ -1,17 +1,15 @@
 import decode from "jwt-decode";
 
 export default class AuthHelperMethods {
-
   loggedIn = () => {
     const token = this.gettoken();
-    console.log(this.istokenExpired(token));
     return !!token && !this.istokenExpired(token);
   };
 
   istokenExpired = token => {
     try {
       const decoded = decode(token);
-      if (decoded.exp > new Date().getTime()) {
+      if (decoded.exp > new Date().getTime() + 1 * 3600) {
         return true;
       } else return false;
     } catch (err) {

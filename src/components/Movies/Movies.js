@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -31,9 +31,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function Movies() {
   const classes = useStyles();
-
   const [expanded, setExpanded] = React.useState(false);
-  const movies = useContext(MoviesContext);
+  const movies = React.useContext(MoviesContext);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);

@@ -9,7 +9,7 @@ export const MoviesProvider = ({ children }) => {
 
   React.useEffect(() => {
     async function fetchMovies() {
-      const data = await axios("http://localhost:3000/movies");
+      const data = await axios(`${apiUrl}/movies`);
       setMovies(data);
     }
     fetchMovies();
