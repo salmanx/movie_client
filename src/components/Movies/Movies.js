@@ -15,40 +15,31 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Box from "@material-ui/core/Box";
 import Rating from "@material-ui/lab/Rating";
 import Chip from "@material-ui/core/Chip";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 import { apiUrl } from "../../config";
+
 const useStyles = makeStyles(theme => ({
   card: {
     backgroundColor: "#FAF7F2"
   },
+
   media: {
     height: 0,
     paddingTop: "56.25%" // 16:9
-  },
-  expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
-  },
-  expandOpen: {
-    transform: "rotate(180deg)"
-  },
-  avatar: {
-    backgroundColor: red[500]
   }
 }));
 
 export default function Movies() {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
-  const [data, setData] = React.useState({ movies: [] });
+  const [movies, setMovies] = React.useState({ movies: [] });
 
   React.useEffect(() => {
     async function fetchMovies() {
-      const result = await axios("http://localhost:3000/movies");
-      setData(result);
+      const data = await axios("http://localhost:3000/movies");
+      setMovies(data);
     }
     fetchMovies();
   }, []);
@@ -57,28 +48,27 @@ export default function Movies() {
     setExpanded(!expanded);
   };
 
-  console.log(data);
+  console.log(movies);
 
   return (
-    <div className="container">
-      <div className="row">
-        {data.data &&
-          data.data.map(movie => (
-            <div className="col-3 mb-3" key={movie.id}>
+    <Container className={classes.cardGrid} maxWidth="md">
+      <Grid container spacing={4}>
+        {movies.data &&
+          movies.data.map(movie => (
+            <Grid item key={movie.id} xs={6} sm={4} md={3}>
               <Card className={classes.card}>
-                <CardHeader
-                  avatar={
-                    <Avatar aria-label="recipe" className={classes.avatar}>
-                      {movie.owner}
-                    </Avatar>
-                  }
-                  title={movie.title}
-                  subheader={movie.created_at}
-                />
+                <CardContent className={classes.content}>
+                  <Typography component="h5" variant="subtitle1">
+                    {movie.title}
+                  </Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {movie.created_at}
+                  </Typography>
+                </CardContent>
                 <CardMedia
                   className={classes.media}
                   image="https://avatars1.githubusercontent.com/u/3165635?s=460&v=4"
-                  title="Paella dish"
+                  title={movie.title}
                 />
                 <CardActions disableSpacing>
                   <Box
@@ -107,9 +97,9 @@ export default function Movies() {
                   </Box>
                 </CardActions>
               </Card>
-            </div>
+            </Grid>
           ))}
-      </div>
-    </div>
+      </Grid>
+    </Container>
   );
 }

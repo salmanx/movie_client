@@ -6,6 +6,7 @@ import "./App.css";
 
 // load Components
 import Navbar from "./components/layouts/Navbar";
+import NavbarSearch from "./components/layouts/NavbarSearch";
 import Footer from "./components/layouts/Footer";
 import Default from "./components/Default";
 import Home from "./components/home/Home";
@@ -17,7 +18,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Fragment>
-          <Navbar />
+          <NavbarSearch />
           <Switch>
             <Route path="/" component={Home} exact />
             <Route path="/signin" component={Signin} exact />
