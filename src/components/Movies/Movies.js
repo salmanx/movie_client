@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -10,15 +10,13 @@ import Collapse from "@material-ui/core/Collapse";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import { red } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Box from "@material-ui/core/Box";
 import Rating from "@material-ui/lab/Rating";
 import Chip from "@material-ui/core/Chip";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import axios from "axios";
-import { apiUrl } from "../../config";
+import { MoviesContext } from "../../context";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -33,22 +31,13 @@ const useStyles = makeStyles(theme => ({
 
 export default function Movies() {
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
-  const [movies, setMovies] = React.useState({ movies: [] });
 
-  React.useEffect(() => {
-    async function fetchMovies() {
-      const data = await axios("http://localhost:3000/movies");
-      setMovies(data);
-    }
-    fetchMovies();
-  }, []);
+  const [expanded, setExpanded] = React.useState(false);
+  const movies = useContext(MoviesContext);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-
-  console.log(movies);
 
   return (
     <Container className={classes.cardGrid} maxWidth="md">
@@ -58,7 +47,7 @@ export default function Movies() {
             <Grid item key={movie.id} xs={6} sm={4} md={3}>
               <Card className={classes.card}>
                 <CardContent className={classes.content}>
-                  <Typography component="h5" variant="subtitle1">
+                  <Typography component="h6" variant="subtitle1">
                     {movie.title}
                   </Typography>
                   <Typography variant="subtitle1" color="textSecondary">

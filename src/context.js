@@ -1,28 +1,21 @@
-import React, { Component } from "react";
+import React from "react";
+import axios from "axios";
+import { apiUrl } from "./config";
 
-const MoviesContext = React.createContext();
-const MoviesConsumer = MoviesContext.Consumer;
+export const MoviesContext = React.createContext();
 
-class MoviesProvider extends Component {
-  state = {};
+export const MoviesProvider = ({ children }) => {
+  const [movies, setMovies] = React.useState({ movies: [] });
 
-  componentDidMount = () => {
-    console.log("context provider mounted");
-  };
+  React.useEffect(() => {
+    async function fetchMovies() {
+      const data = await axios("http://localhost:3000/movies");
+      setMovies(data);
+    }
+    fetchMovies();
+  }, []);
 
-
-
-  render() {
-    return (
-      <MoviesContext.Provider
-        value={{
-          ...this.state
-        }}
-      >
-        {this.props.children}
-      </MoviesContext.Provider>
-    );
-  }
-}
-
-export { MoviesConsumer, MoviesProvider };
+  return (
+    <MoviesContext.Provider value={movies}>{children}</MoviesContext.Provider>
+  );
+};

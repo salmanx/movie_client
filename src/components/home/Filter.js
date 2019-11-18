@@ -64,31 +64,32 @@ export default function Filter() {
 
   return (
     <div className={classes.root}>
-      <div className={classes.filter}>
-        <Button
-          aria-controls="simple-menu"
-          aria-haspopup="true"
-          color="primary"
-          className="classes.btn"
-          onClick={handleCategoryClick}
-        >
-          Category
-        </Button>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorCatEl}
-          keepMounted
-          open={Boolean(anchorCatEl)}
-          onClose={handleCategoryClose}
-        >
-          {categories.data &&
-            categories.data.map(cat => (
+      {categories.data && (
+        <div className={classes.filter}>
+          <Button
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            color="primary"
+            className="classes.btn"
+            onClick={handleCategoryClick}
+          >
+            Category
+          </Button>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorCatEl}
+            keepMounted
+            open={Boolean(anchorCatEl)}
+            onClose={handleCategoryClose}
+          >
+            {categories.data.map(cat => (
               <MenuItem onClick={handleCategoryClose} key={cat.id}>
                 {cat.name}
               </MenuItem>
             ))}
-        </Menu>
-      </div>
+          </Menu>
+        </div>
+      )}
 
       <div className={classes.filter}>
         <Button

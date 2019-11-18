@@ -12,14 +12,14 @@ import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1
   },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
+
   title: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
@@ -71,6 +71,22 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     [theme.breakpoints.up("md")]: {
       display: "none"
+    }
+  },
+  menuButton: {},
+  link: {
+    marginRight: theme.spacing(2),
+    marginTop: theme.spacing(1),
+    border: "1px solid #fff",
+    height: "30px",
+    color: "#fff",
+    textTransform: "uppercase",
+    lineHeight: "10px",
+    borderRadius: "5px",
+    padding: theme.spacing(1),
+    "&:hover": {
+      color: "#fff",
+      textDecoration: "none"
     }
   }
 }));
@@ -138,6 +154,7 @@ export default function PrimarySearchAppBar() {
         </IconButton>
         <p>Profile</p>
       </MenuItem>
+      <MenuItem>Sign in</MenuItem>
     </Menu>
   );
 
@@ -178,9 +195,14 @@ export default function PrimarySearchAppBar() {
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="inherit"
+              className="mr-5"
             >
               <AccountCircle />
             </IconButton>
+
+            <Link to="/signin" className={classes.link}>
+              Sign in
+            </Link>
           </div>
           <div className={classes.sectionMobile}>
             <IconButton
