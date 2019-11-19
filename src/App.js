@@ -12,6 +12,7 @@ import Default from "./components/Default";
 import Home from "./components/home/Home";
 import Signin from "./components/auth/Signin";
 import Signup from "./components/auth/Signup";
+import UserUpdate from "./components/auth/UserUpdate";
 
 class App extends Component {
   render() {
@@ -23,6 +24,8 @@ class App extends Component {
             <Route path="/" component={Home} exact />
             <Route path="/signin" component={Signin} exact />
             <Route path="/signup" component={Signup} exact />
+            <Route path="/users/edit/:id" component={UserUpdate} exact />
+
             <Route component={Default} />
           </Switch>
           <Footer />

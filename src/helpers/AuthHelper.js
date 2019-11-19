@@ -42,7 +42,6 @@ export default class AuthHelperMethods {
 
   currentUser = () => {
     let token = decode(this.gettoken());
-    console.log(token);
     return token;
   };
 }
