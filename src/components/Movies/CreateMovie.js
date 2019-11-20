@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -38,63 +39,30 @@ const useStyles = theme => ({
   }
 });
 
-class UserUpdate extends React.Component {
+class CreateMovie extends React.Component {
   auth = new AuthHelperMethods();
 
   constructor(props) {
     super(props);
-    this.handleUserUpdate = this.handleUserUpdate.bind(this);
+    this.handleCreateMovie = this.handleCreateMovie.bind(this);
 
     this.state = {
-      email: "",
-      password: "",
-      firstName: "",
-      lastName: "",
-      error: "",
+      title: null,
+      text: null,
       user: {}
     };
   }
 
-  componentDidMount() {
-    if (this.auth.currentUser()) {
-      const headers = {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      };
-      // Setting Authorization header
-      if (this.auth.loggedIn()) {
-        headers["Authorization"] = this.auth.gettoken();
-      }
-
-      Axios.get(`${apiUrl}/users/${this.auth.currentUser().user_id}`, {
-        headers
-      })
-        .then(res => {
-          console.log(res.data);
-          this.setState(() => ({
-            user: res.data
-          }));
-        })
-        .catch(err => console.log(err));
-    }
-  }
-
-  handleUserUpdate(e) {
+  handleCreateMovie(e) {
     e.preventDefault();
 
-    if (!e.target.elements.firstName.value) {
-      this.setState({ error: "Please provide your first name" });
-    } else if (!e.target.elements.lastName.value) {
-      this.setState({ error: "Please provide your last email" });
-    } else if (!e.target.elements.email.value) {
-      this.setState({ error: "Please provide your valid email" });
-    } else if (!e.target.elements.password.value) {
-      this.setState({ error: "Please provide your valid password" });
+    if (!e.target.elements.title.value) {
+      this.setState({ error: "Please provide movie title" });
+    } else if (!e.target.elements.text.value) {
+      this.setState({ error: "Please provide movie details" });
     } else {
-      const email = e.target.elements.email.value;
-      const password = e.target.elements.password.value;
-      const firstName = e.target.elements.firstName.value;
-      const lastName = e.target.elements.lastName.value;
+      const title = e.target.elements.title.value;
+      const text = e.target.elements.text.value;
 
       const headers = {
         Accept: "application/json",
@@ -105,14 +73,13 @@ class UserUpdate extends React.Component {
         headers["Authorization"] = this.auth.gettoken();
       }
 
-      Axios.put(
-        `${apiUrl}/users/${this.auth.currentUser().user_id}`,
+      Axios.post(
+        `${apiUrl}/movies`,
         {
-          user: {
-            first_name: firstName,
-            last_name: lastName,
-            email,
-            password
+          movie: {
+            title,
+            text,
+            category_id: 1
           }
         },
         { headers }
@@ -139,7 +106,7 @@ class UserUpdate extends React.Component {
         <CssBaseline />
         <div className={classes.paper}>
           <Typography component="h1" variant="h5">
-            Update your profile here
+            Create a movie here!
           </Typography>
           {this.state.error && (
             <p className="alert alert-danger">{this.state.error}</p>
@@ -147,55 +114,28 @@ class UserUpdate extends React.Component {
           <form
             className={classes.form}
             noValidate
-            onSubmit={this.handleUserUpdate}
+            onSubmit={this.handleCreateMovie}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  autoComplete="fname"
-                  name="firstName"
+                  name="title"
                   variant="outlined"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
-                  defaultValue={this.state.user.first_name || ""}
+                  id="title"
+                  label="Movie Name"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
                   variant="outlined"
                   required
                   fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
+                  id="text"
+                  label="Movie Details"
+                  name="text"
                   autoComplete="lname"
-                  defaultValue={this.state.user.last_name || ""}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  defaultValue={this.state.user.email || ""}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
                 />
               </Grid>
             </Grid>
@@ -206,7 +146,7 @@ class UserUpdate extends React.Component {
               color="primary"
               className={classes.submit}
             >
-              Update
+              Create Movie
             </Button>
           </form>
         </div>
@@ -215,8 +155,8 @@ class UserUpdate extends React.Component {
   }
 }
 
-UserUpdate.propTypes = {
+CreateMovie.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(useStyles)(UserUpdate);
+export default withStyles(useStyles)(CreateMovie);

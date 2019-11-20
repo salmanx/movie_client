@@ -13,6 +13,7 @@ import Home from "./components/home/Home";
 import Signin from "./components/auth/Signin";
 import Signup from "./components/auth/Signup";
 import UserUpdate from "./components/auth/UserUpdate";
+import CreateMovie from "./components/Movies/CreateMovie";
 
 class App extends Component {
   render() {
@@ -25,7 +26,7 @@ class App extends Component {
             <Route path="/signin" component={Signin} exact />
             <Route path="/signup" component={Signup} exact />
             <Route path="/users/edit/:id" component={UserUpdate} exact />
-
+            <Route path="/movies/new" component={CreateMovie} exact />
             <Route component={Default} />
           </Switch>
           <Footer />

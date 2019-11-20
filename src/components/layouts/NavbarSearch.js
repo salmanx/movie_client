@@ -89,6 +89,14 @@ const useStyles = makeStyles(theme => ({
       color: "#fff",
       textDecoration: "none"
     }
+  },
+  menuLink: {
+    backgroundColor: "none",
+    color: "#fff",
+    "&:hover": {
+      color: "#fff",
+      textDecoration: "none"
+    }
   }
 }));
 
@@ -130,7 +138,12 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        {auth.loggedIn() && (
+          <Link to={`/users/edit/${auth.currentUser().user_id}`}>Profile</Link>
+        )}
+      </MenuItem>
+
       <MenuItem onClick={() => auth.logout()}>Signout</MenuItem>
     </Menu>
   );
