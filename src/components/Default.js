@@ -12,11 +12,10 @@ class Default extends Component {
           <div className="container">
             <div className="col-md-8 default-page-content">
               <h2>
-                <strong>OPS!!</strong> The page or movie you are looking for
-                is not found.
+                <strong>OPS!!</strong> The page or movie you are looking for is
+                not found.
               </h2>
-              <p>
-              </p>
+              <p></p>
             </div>
           </div>
         </div>
@@ -29,7 +28,7 @@ const DefaultWrapper = styled.div`
   .default-page-content {
     h2 {
       text-transform: uppercase;
-      color: #ea7272;
+      color: #6610f2;
       font-family: "Lato", sans-serif;
       padding: 20px 0px;
       font-weight: bold;

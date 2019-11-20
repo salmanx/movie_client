@@ -8,7 +8,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { withStyles } from "@material-ui/core/styles";
@@ -16,6 +15,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Axios from "axios";
 import { apiUrl } from "../../config";
 import AuthHelperMethods from "../../helpers/AuthHelper";
+import withAuth from "../withAuth";
 
 const useStyles = theme => ({
   "@global": {
@@ -70,7 +70,6 @@ class UserUpdate extends React.Component {
         headers
       })
         .then(res => {
-          console.log(res.data);
           this.setState(() => ({
             user: res.data
           }));
@@ -219,4 +218,4 @@ UserUpdate.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(useStyles)(UserUpdate);
+export default withAuth(withStyles(useStyles)(UserUpdate));

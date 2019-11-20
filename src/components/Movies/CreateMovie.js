@@ -17,6 +17,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Axios from "axios";
 import { apiUrl } from "../../config";
 import AuthHelperMethods from "../../helpers/AuthHelper";
+import withAuth from "../withAuth";
 
 const useStyles = theme => ({
   "@global": {
@@ -77,9 +78,9 @@ class CreateMovie extends React.Component {
         `${apiUrl}/movies`,
         {
           movie: {
+            category_id: 1,
             title,
-            text,
-            category_id: 1
+            text
           }
         },
         { headers }
@@ -159,4 +160,4 @@ CreateMovie.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(useStyles)(CreateMovie);
+export default withAuth(withStyles(useStyles)(CreateMovie));

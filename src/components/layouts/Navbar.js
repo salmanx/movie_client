@@ -2,113 +2,261 @@ import React from "react";
 import { Link } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import AccountCircle from "@material-ui/icons/AccountCircle";
+import Typography from "@material-ui/core/Typography";
+import InputBase from "@material-ui/core/InputBase";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import CameraIcon from "@material-ui/icons/PhotoCamera";
-import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
+import MenuIcon from "@material-ui/icons/Menu";
+import SearchIcon from "@material-ui/icons/Search";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import MoreIcon from "@material-ui/icons/MoreVert";
+import { fade, makeStyles } from "@material-ui/core/styles";
+import AuthHelperMethods from "../../helpers/AuthHelper";
 
 const useStyles = makeStyles(theme => ({
-  root: {
+  grow: {
     flexGrow: 1
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
-    border: "1px solid #fff"
-  },
+
   title: {
-    flexGrow: 1
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block"
+    }
   },
+  search: {
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    "&:hover": {
+      backgroundColor: fade(theme.palette.common.white, 0.25)
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(3),
+      width: "auto"
+    }
+  },
+  searchIcon: {
+    width: theme.spacing(7),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  inputRoot: {
+    color: "inherit"
+  },
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 7),
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      width: 200
+    }
+  },
+  sectionDesktop: {
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "flex"
+    }
+  },
+  sectionMobile: {
+    display: "flex",
+    [theme.breakpoints.up("md")]: {
+      display: "none"
+    }
+  },
+
   link: {
+    marginRight: "15px",
+    marginTop: "10px",
+    border: "1px solid #fff",
+    height: "30px",
     color: "#fff",
+    textTransform: "uppercase",
+    lineHeight: "14px",
+    borderRadius: "5px",
+    fontSize: "15px",
+    fontWeight: "normal",
+    padding: theme.spacing(1),
     "&:hover": {
       color: "#fff",
+      textDecoration: "none"
+    }
+  },
+  menuLink: {
+    backgroundColor: "none",
+    color: "#000",
+    "&:hover": {
+      color: "#000",
+      backgroundColor: "none",
       textDecoration: "none"
     }
   }
 }));
 
-export default function Navbar() {
+export default function NavBar() {
   const classes = useStyles();
-  const [auth, setAuth] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const auth = new AuthHelperMethods();
 
-  // const handleChange = event => {
-  //   setAuth(event.target.checked);
-  // };
+  console.log(auth.loggedIn());
 
-  const handleMenu = event => {
+  const handleProfileMenuOpen = event => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
   };
 
-  return (
-    <React.Fragment>
-      <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography
-              variant="h6"
-              className={classes.title}
-              color="inherit"
-              noWrap
-            >
-              <CameraIcon className={classes.icon} />
-              FMovies
-            </Typography>
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
 
-            {auth && (
-              <div>
-                <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right"
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right"
-                  }}
-                  open={open}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleClose}>My account</MenuItem>
-                </Menu>
-              </div>
-            )}
-            {!auth && (
-              <Button
-                variant="outlined"
-                size="small"
-                className={classes.menuButton}
+  const handleMobileMenuOpen = event => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const menuId = "primary-search-account-menu";
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleMenuClose}>
+        {auth.loggedIn() && (
+          <Link to={`/movies/new`} className={classes.menuLink}>
+            Create Movie
+          </Link>
+        )}
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        {auth.loggedIn() && (
+          <Link
+            to={`/users/edit/${auth.currentUser().user_id}`}
+            className={classes.menuLink}
+          >
+            Profile
+          </Link>
+        )}
+      </MenuItem>
+
+      <MenuItem onClick={() => auth.logout()}>Signout</MenuItem>
+    </Menu>
+  );
+
+  const mobileMenuId = "primary-search-account-menu-mobile";
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      {auth.loggedIn() && (
+        <MenuItem onClick={handleProfileMenuOpen}>
+          <IconButton
+            aria-label="account of current user"
+            aria-controls="primary-search-account-menu"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+          <p onClick={() => auth.logout()}>Signout</p>
+        </MenuItem>
+      )}
+      {!auth.loggedIn() && (
+        <MenuItem>
+          <Link to="/signin">Sign in</Link>
+        </MenuItem>
+      )}
+    </Menu>
+  );
+
+  return (
+    <div className={classes.grow}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="open drawer"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography className={classes.title} variant="h6" noWrap>
+            Material-UI
+          </Typography>
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <SearchIcon />
+            </div>
+            <InputBase
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput
+              }}
+              inputProps={{ "aria-label": "search" }}
+            />
+          </div>
+          <div className={classes.grow} />
+          <div className={classes.sectionDesktop}>
+            {auth.loggedIn() && (
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+                className="mr-5"
               >
-                <Link to="/signin" className={classes.link}>
-                  Sign in
-                </Link>
-              </Button>
+                <AccountCircle />
+              </IconButton>
             )}
-          </Toolbar>
-        </AppBar>
-      </div>
-    </React.Fragment>
+            {!auth.loggedIn() && (
+              <Link to="/signin" className={classes.link}>
+                Sign in
+              </Link>
+            )}
+          </div>
+          <div className={classes.sectionMobile}>
+            <IconButton
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <MoreIcon />
+            </IconButton>
+          </div>
+        </Toolbar>
+      </AppBar>
+      {renderMobileMenu}
+      {renderMenu}
+    </div>
   );
 }
