@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Filter from "./Filter";
-import Movies from "../Movies/Movies";
+import Movies from "../movies/Movies";
 import styled from "styled-components";
 
 export default class Home extends Component {
