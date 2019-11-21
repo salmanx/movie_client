@@ -4,17 +4,13 @@ import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { withStyles } from "@material-ui/core/styles";
-
 import Axios from "axios";
-import { apiUrl } from "../../config";
 import AuthHelperMethods from "../../helpers/AuthHelper";
+import { apiUrl } from "../../config";
+import { withStyles } from "@material-ui/core/styles";
 
 const useStyles = theme => ({
   "@global": {
@@ -80,7 +76,6 @@ class Signup extends React.Component {
       })
         .then(response => {
           localStorage.setItem("token", response.data.token);
-          const user = this.auth.currentUser();
           this.props.history.push(`/`);
         })
         .catch(error => {

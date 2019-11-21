@@ -98,6 +98,15 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: "none",
       textDecoration: "none"
     }
+  },
+  menuLinkBrand: {
+    backgroundColor: "none",
+    color: "#fff",
+    "&:hover": {
+      color: "#fff",
+      backgroundColor: "none",
+      textDecoration: "none"
+    }
   }
 }));
 
@@ -108,8 +117,6 @@ export default function NavBar() {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const auth = new AuthHelperMethods();
-
-  console.log(auth.loggedIn());
 
   const handleProfileMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -173,18 +180,27 @@ export default function NavBar() {
       onClose={handleMobileMenuClose}
     >
       {auth.loggedIn() && (
-        <MenuItem onClick={handleProfileMenuOpen}>
-          <IconButton
-            aria-label="account of current user"
-            aria-controls="primary-search-account-menu"
-            aria-haspopup="true"
-            color="inherit"
-          >
-            <AccountCircle />
-          </IconButton>
-          <p onClick={() => auth.logout()}>Signout</p>
-        </MenuItem>
+        <div>
+          <MenuItem onClick={handleMenuClose}>
+            <Link to={`/movies/new`} className={classes.menuLink}>
+              Create Movie
+            </Link>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <Link
+              to={`/users/edit/${auth.currentUser().user_id}`}
+              className={classes.menuLink}
+            >
+              Profile
+            </Link>
+          </MenuItem>
+
+          <MenuItem onClick={handleProfileMenuOpen}>
+            <p onClick={() => auth.logout()}>Signout</p>
+          </MenuItem>
+        </div>
       )}
+
       {!auth.loggedIn() && (
         <MenuItem>
           <Link to="/signin">Sign in</Link>
@@ -205,9 +221,11 @@ export default function NavBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            Material-UI
-          </Typography>
+          <Link to="/" className={classes.menuLinkBrand}>
+            <Typography className={classes.title} variant="h6" noWrap>
+              FMovie
+            </Typography>
+          </Link>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
