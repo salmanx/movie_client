@@ -11,6 +11,7 @@ const jsx = (
     <App />
   </MoviesProvider>
 );
+// const jsx = <App />;
 ReactDOM.render(jsx, document.getElementById("root"));
 
 serviceWorker.unregister();

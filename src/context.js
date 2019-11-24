@@ -1,21 +1,50 @@
-import React from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import { apiUrl } from "./config";
+const MovieContext = React.createContext();
+const MoviesConsumer = MovieContext.Consumer;
 
-export const MoviesContext = React.createContext();
+class MoviesProvider extends Component {
+  state = {
+    movies: []
+  };
 
-export const MoviesProvider = ({ children }) => {
-  const [movies, setMovies] = React.useState({ movies: [] });
+  componentDidMount = () => {
+    axios
+      .get(`${apiUrl}/movies`)
+      .then(res => {
+        this.setState({
+          movies: res.data
+        });
+      })
+      .catch(err => console.log(err));
+  };
 
-  React.useEffect(() => {
-    async function fetchMovies() {
-      const data = await axios(`${apiUrl}/movies`);
-      setMovies(data);
-    }
-    fetchMovies();
-  }, []);
+  filterMoviesByCategory = cat => {
+    const url =
+      cat == null ? `${apiUrl}/movies` : `${apiUrl}/movies?category=${cat.id}`;
+    axios
+      .get(url)
+      .then(res => {
+        this.setState({
+          movies: res.data
+        });
+      })
+      .catch(err => console.log(err));
+  };
 
-  return (
-    <MoviesContext.Provider value={movies}>{children}</MoviesContext.Provider>
-  );
-};
+  render() {
+    return (
+      <MovieContext.Provider
+        value={{
+          ...this.state,
+          filterMoviesByCategory: this.filterMoviesByCategory
+        }}
+      >
+        {this.props.children}
+      </MovieContext.Provider>
+    );
+  }
+}
+
+export { MoviesConsumer, MoviesProvider };

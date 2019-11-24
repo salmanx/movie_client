@@ -1,11 +1,14 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Movie from "./Movie/Movie";
-import { makeStyles } from "@material-ui/core/styles";
-import { MoviesContext } from "../../context";
+import { MoviesConsumer } from "../../context";
+import { withStyles } from "@material-ui/core/styles";
+import axios from "axios";
+import { apiUrl } from "../../config";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = theme => ({
   card: {
     backgroundColor: "#FAF7F2"
   },
@@ -14,18 +17,41 @@ const useStyles = makeStyles(theme => ({
     height: 0,
     paddingTop: "56.25%" // 16:9
   }
-}));
+});
 
-export default function Movies() {
-  const classes = useStyles();
-  const movies = React.useContext(MoviesContext);
+class Movies extends React.Component {
+  state = {
+    movies: []
+  };
 
-  return (
-    <Container className={classes.cardGrid} maxWidth="md">
-      <Grid container spacing={4}>
-        {movies.data &&
-          movies.data.map(movie => <Movie key={movie.id} movie={movie} />)}
-      </Grid>
-    </Container>
-  );
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {}
+
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <Container className={classes.cardGrid} maxWidth="md">
+        <MoviesConsumer>
+          {data => (
+            <Grid container spacing={4}>
+              {data.movies &&
+                data.movies.map(movie => (
+                  <Movie key={movie.id} movie={movie} />
+                ))}
+            </Grid>
+          )}
+        </MoviesConsumer>
+      </Container>
+    );
+  }
 }
+
+Movies.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default withStyles(useStyles)(Movies);

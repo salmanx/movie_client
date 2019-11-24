@@ -88,14 +88,14 @@ class Movie extends React.Component {
       headers["Authorization"] = this.auth.gettoken();
     }
     return (
-      <Grid item xs={6} sm={4} md={3}>
+      <Grid item xs={6} sm={4} md={4}>
         <Card className={classes.card}>
           <CardContent className={classes.content}>
             <Typography component="h6" variant="subtitle1">
               {this.movie.title}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary">
-              {this.movie.id}
+              {this.movie.category.name}
             </Typography>
           </CardContent>
           <CardMedia

@@ -12,7 +12,7 @@ import Home from "./components/home/Home";
 import Signin from "./components/auth/Signin";
 import Signup from "./components/auth/Signup";
 import UserUpdate from "./components/auth/UserUpdate";
-import CreateMovie from "./components/Movies/CreateMovie";
+import CreateMovie from "./components/movies/CreateMovie";
 
 class App extends Component {
   render() {
