@@ -1,3 +1,33 @@
 body {
   font-family: "Roboto", sans-serif;
 }
+.react-rater {
+  display: inline-block;
+  line-height: normal;
+}
+.react-rater > * {
+  display: inline-block;
+}
+
+.react-rater-star {
+  cursor: pointer;
+  color: #ccc;
+  position: relative;
+}
+.react-rater-star.will-be-active {
+  color: #fc6 !important;
+}
+.react-rater-star.is-active {
+  color: #fc6 !important;
+}
+.react-rater-star.is-active-half:before {
+  color: #000;
+  content: "\2605";
+  position: absolute;
+  left: 0;
+  width: 50%;
+  overflow: hidden;
+}
+.react-rater-star.is-disabled {
+  cursor: default;
+}

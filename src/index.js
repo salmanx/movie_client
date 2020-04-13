@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { MoviesProvider } from "./context";
 import * as serviceWorker from "./serviceWorker";
+import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+
 import "./index.css";
 
 import App from "./App";

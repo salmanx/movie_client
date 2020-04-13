@@ -6,31 +6,38 @@ const MoviesConsumer = MovieContext.Consumer;
 
 class MoviesProvider extends Component {
   state = {
-    movies: []
+    movies: [],
+    loading: null
   };
 
   componentDidMount = () => {
+    this.setState({ loading: true });
     axios
       .get(`${apiUrl}/movies`)
       .then(res => {
         this.setState({
-          movies: res.data
+          movies: res.data,
+          loading: false
         });
       })
       .catch(err => console.log(err));
+    this.setState({ loading: null });
   };
 
   filterMoviesByCategory = cat => {
+    this.setState({ loading: true });
     const url =
       cat == null ? `${apiUrl}/movies` : `${apiUrl}/movies?category=${cat.id}`;
     axios
       .get(url)
       .then(res => {
         this.setState({
-          movies: res.data
+          movies: res.data,
+          loading: false
         });
       })
       .catch(err => console.log(err));
+    this.setState({ loading: null });
   };
 
   render() {

@@ -49,46 +49,7 @@ class Movie extends React.Component {
 
   constructor(props) {
     super(props);
-    this.handleRating = this.handleRating.bind(this);
   }
-
-  handleRating = (rating, movieId) => {
-    console.log(rating);
-
-    // rating.target.classList.add("is-active");
-
-    // if (!this.auth.loggedIn()) {
-    //   this.props.showSneakbar("requiredAuth");
-    //   return;
-    // }
-    //
-    // const headers = {
-    //   Accept: "application/json",
-    //   "Content-Type": "application/json"
-    // };
-    // // Setting Authorization header
-    // if (this.auth.loggedIn()) {
-    //   headers["Authorization"] = this.auth.gettoken();
-    // }
-    //
-    // Axios.post(
-    //   `${apiUrl}/rating`,
-    //   {
-    //     rating: {
-    //       movie_id: movieId,
-    //       rating: rating.rating
-    //     }
-    //   },
-    //   { headers }
-    // )
-    //   .then(response => {
-    //     this.props.showSneakbar();
-    //     rating.target.classList.add("is-active");
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
-  };
 
   render() {
     const { classes } = this.props;
@@ -118,13 +79,7 @@ class Movie extends React.Component {
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          <Rater
-            total={5}
-            rating={movie.rating}
-            onRate={rating => {
-              this.handleRating(rating, movie.id);
-            }}
-          />
+          <Rater total={5} rating={movie.rating} interactive={false} />
         </CardActions>
       </Card>
     );

@@ -60,9 +60,10 @@ class Filter extends React.Component {
   }
 
   handleCategoryMenuItemClick(index) {
-    console.log(index);
     this.setState({ anchorCatEl: null });
-    this.setState({ selectedCategory: index });
+    this.setState({ selectedCategory: index }, () =>
+      console.log(this.state.selectedCategory)
+    );
   }
 
   handleRatingFilterClick(event) {
@@ -123,14 +124,13 @@ class Filter extends React.Component {
                       onClick={() => {
                         this.handleCategoryMenuItemClick(index + 1);
                         data.filterMoviesByCategory(cat);
-                        console.log(index + 1, this.state.selectedCategory);
                       }}
                       key={cat.id}
                       value={cat.id}
                       name="category"
-                      selected={index + 1 === this.state.selectedCategory}
+                      selected={cat.id === this.state.selectedCategory}
                     >
-                      {cat.name}
+                      {cat.name} ({cat.total_movies})
                     </MenuItem>
                   ))}
                 </Menu>

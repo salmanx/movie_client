@@ -32,12 +32,12 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       backgroundColor: fade(theme.palette.common.white, 0.25)
     },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
+    marginRight: 0,
+    marginLeft: theme.spacing(3),
+    width: "70%",
     [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto"
+      marginLeft: theme.spacing(9),
+      width: "70%"
     }
   },
   searchIcon: {
@@ -50,14 +50,15 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center"
   },
   inputRoot: {
-    color: "inherit"
+    color: "inherit",
+    width: "100%"
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: 200
+      width: "100%"
     }
   },
   sectionDesktop: {
@@ -148,6 +149,14 @@ export default function NavBar() {
     >
       <MenuItem onClick={handleMenuClose}>
         {auth.loggedIn() && (
+          <Link to={`/admin/movies`} className={classes.menuLink}>
+            Your Movies
+          </Link>
+        )}
+      </MenuItem>
+
+      <MenuItem onClick={handleMenuClose}>
+        {auth.loggedIn() && (
           <Link to={`/movies/new`} className={classes.menuLink}>
             Create Movie
           </Link>
@@ -181,6 +190,12 @@ export default function NavBar() {
     >
       {auth.loggedIn() && (
         <div>
+          <MenuItem onClick={handleMenuClose}>
+            <Link to={`/admin/movies`} className={classes.menuLink}>
+              Your Movies
+            </Link>
+          </MenuItem>
+
           <MenuItem onClick={handleMenuClose}>
             <Link to={`/movies/new`} className={classes.menuLink}>
               Create Movie

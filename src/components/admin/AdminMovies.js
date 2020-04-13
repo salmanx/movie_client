@@ -5,8 +5,9 @@ import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FlashMessage from "../layouts/FlashMessage";
 import Movie from "./Movie/Movie";
-import { MoviesConsumer } from "../../context";
 import { withStyles } from "@material-ui/core/styles";
+import axios from "axios";
+import { apiUrl } from "../../config";
 
 const useStyles = theme => ({
   card: {
@@ -27,17 +28,31 @@ const useStyles = theme => ({
   }
 });
 
-class Movies extends React.Component {
+class AdminMovies extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      movies: [],
+      loading: null,
       snackBarOpen: false,
       flashType: undefined
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.setState({ loading: true });
+    axios
+      .get(`${apiUrl}/movies`)
+      .then(res => {
+        this.setState({
+          movies: res.data,
+          loading: false
+        });
+      })
+      .catch(err => console.log(err));
+    this.setState({ loading: null });
+  }
 
   handleFlashMessage = (flag = "") => {
     this.setState(
@@ -57,43 +72,35 @@ class Movies extends React.Component {
 
     return (
       <Container className={classes.cardGrid} maxWidth="md">
-        <FlashMessage
-          open={this.state.snackBarOpen}
-          flashType={this.state.flashType}
-        />
-        <MoviesConsumer>
-          {data => (
-            <Grid container spacing={4}>
-              {data.loading === null ? (
-                <Grid container justify="center">
-                  <div className={classes.circularProgress}>
-                    <CircularProgress color="primary" />
-                  </div>
-                </Grid>
-              ) : data.movies.length > 0 ? (
-                data.movies &&
-                data.movies.map(movie => (
-                  <Movie
-                    key={movie.id}
-                    movie={movie}
-                    showSneakbar={this.handleFlashMessage}
-                  />
-                ))
-              ) : (
-                <Grid container justify="center">
-                  <h2>No Movies found</h2>
-                </Grid>
-              )}
+        <Grid container spacing={4}>
+          {this.state.loading === null ? (
+            <Grid container justify="center">
+              <div className={classes.circularProgress}>
+                <CircularProgress color="primary" />
+              </div>
+            </Grid>
+          ) : this.state.movies.length > 0 ? (
+            this.state.movies &&
+            this.state.movies.map(movie => (
+              <Movie
+                key={movie.id}
+                movie={movie}
+                showSneakbar={this.handleFlashMessage}
+              />
+            ))
+          ) : (
+            <Grid container justify="center">
+              <h2>No Movies found</h2>
             </Grid>
           )}
-        </MoviesConsumer>
+        </Grid>
       </Container>
     );
   }
 }
 
-Movies.propTypes = {
+AdminMovies.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(useStyles)(Movies);
+export default withStyles(useStyles)(AdminMovies);
