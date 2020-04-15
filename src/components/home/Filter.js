@@ -1,14 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { MoviesConsumer } from "../../context";
 import axios from "axios";
 import { apiUrl } from "../../config";
 import { withStyles } from "@material-ui/core/styles";
+import { getAllMovies } from "../../redux/actions/movies";
 
-const useStyles = theme => ({
+const useStyles = (theme) => ({
   root: {
     display: "flex",
     backgroundColor: "#ddd",
@@ -18,17 +19,17 @@ const useStyles = theme => ({
     paddingBottom: "30px",
     flexWrap: "wrap",
     "& > *": {
-      margin: theme.spacing(0.5)
-    }
+      margin: theme.spacing(0.5),
+    },
   },
   btn: {
     "&:focus": {
       backgroundColor: theme.palette.primary.main,
       "& .MuiListItemIcon-root, & .MuiListItemText-primary": {
-        color: theme.palette.common.white
-      }
-    }
-  }
+        color: theme.palette.common.white,
+      },
+    },
+  },
 });
 
 class Filter extends React.Component {
@@ -38,8 +39,8 @@ class Filter extends React.Component {
     this.state = {
       anchorCatEl: null,
       anchorEl: null,
-      selectedCategory: null,
-      categories: []
+      categories: [],
+      selectedCategory: {},
     };
 
     this.handleCategoryMenuClick = this.handleCategoryMenuClick.bind(this);
@@ -61,9 +62,6 @@ class Filter extends React.Component {
 
   handleCategoryMenuItemClick(index) {
     this.setState({ anchorCatEl: null });
-    this.setState({ selectedCategory: index }, () =>
-      console.log(this.state.selectedCategory)
-    );
   }
 
   handleRatingFilterClick(event) {
@@ -75,114 +73,119 @@ class Filter extends React.Component {
     this.setState({ anchorEl: null });
   }
 
+  filterMoviesByCategory(category) {
+    if (category) {
+      this.props.getAllMovies({ category: category.id });
+      this.setState({ selectedCategory: category });
+    } else {
+      this.props.getAllMovies();
+      this.setState({ selectedCategory: {} });
+    }
+  }
+
   componentDidMount() {
     axios
       .get(`${apiUrl}/categories`)
-      .then(res => {
+      .then((res) => {
         this.setState({
-          categories: res.data
+          categories: res.data,
         });
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }
 
   render() {
     const { classes } = this.props;
 
     return (
-      <MoviesConsumer>
-        {data => (
-          <div className={classes.root}>
-            {this.state.categories && (
-              <div className={classes.filter}>
-                <Button
-                  aria-controls="simple-menu"
-                  aria-haspopup="true"
-                  color="primary"
-                  className="classes.btn"
-                  onClick={this.handleCategoryMenuClick}
-                >
-                  Category
-                </Button>
-                <Menu
-                  id="simple-menu"
-                  anchorEl={this.state.anchorCatEl}
-                  keepMounted
-                  open={Boolean(this.state.anchorCatEl)}
-                  onClose={this.handleCategoryMenuClose}
-                >
-                  <MenuItem
-                    onClick={e => {
-                      this.handleCategoryMenuClose();
-                      data.filterMoviesByCategory(null);
-                    }}
-                  >
-                    All
-                  </MenuItem>
-                  {this.state.categories.map((cat, index) => (
-                    <MenuItem
-                      onClick={() => {
-                        this.handleCategoryMenuItemClick(index + 1);
-                        data.filterMoviesByCategory(cat);
-                      }}
-                      key={cat.id}
-                      value={cat.id}
-                      name="category"
-                      selected={cat.id === this.state.selectedCategory}
-                    >
-                      {cat.name} ({cat.total_movies})
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </div>
-            )}
-
-            <div className={classes.filter}>
-              <Button
-                aria-controls="simple-menu"
-                aria-haspopup="true"
-                color="primary"
-                className="classes.btn"
-                onClick={this.handleRatingFilterClick}
+      <div className={classes.root}>
+        {this.state.categories && (
+          <div className={classes.filter}>
+            <Button
+              aria-controls="simple-menu"
+              aria-haspopup="true"
+              color="primary"
+              className="classes.btn"
+              onClick={this.handleCategoryMenuClick}
+            >
+              {Object.keys(this.state.selectedCategory).length
+                ? this.state.selectedCategory.name
+                : "Category"}
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={this.state.anchorCatEl}
+              keepMounted
+              open={Boolean(this.state.anchorCatEl)}
+              onClose={this.handleCategoryMenuClose}
+            >
+              <MenuItem
+                onClick={(e) => {
+                  this.handleCategoryMenuClose();
+                  this.filterMoviesByCategory(null);
+                }}
               >
-                Open Menu
-              </Button>
-              <Menu
-                id="simple-menu"
-                anchorEl={this.state.anchorEl}
-                keepMounted
-                open={Boolean(this.state.anchorEl)}
-                onClose={this.handleRatingFilterClose}
-              >
-                <MenuItem onClick={this.handleRatingFilterClose}>
-                  Profile1
+                All
+              </MenuItem>
+              {this.state.categories.map((cat, index) => (
+                <MenuItem
+                  onClick={() => {
+                    this.handleCategoryMenuItemClick(index + 1);
+                    this.filterMoviesByCategory(cat);
+                  }}
+                  key={cat.id}
+                  value={cat.id}
+                  name="category"
+                >
+                  {cat.name} ({cat.total_movies})
                 </MenuItem>
-                <MenuItem onClick={this.handleRatingFilterClose}>
-                  My account1
-                </MenuItem>
-                <MenuItem onClick={this.handleRatingFilterClose}>
-                  Logout1
-                </MenuItem>
-                <MenuItem onClick={this.handleRatingFilterClose}>
-                  Profile1
-                </MenuItem>
-                <MenuItem onClick={this.handleRatingFilterClose}>
-                  My account1
-                </MenuItem>
-                <MenuItem onClick={this.handleRatingFilterClose}>
-                  Logout1
-                </MenuItem>
-              </Menu>
-            </div>
+              ))}
+            </Menu>
           </div>
         )}
-      </MoviesConsumer>
+
+        <div className={classes.filter}>
+          <Button
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            color="primary"
+            className="classes.btn"
+            onClick={this.handleRatingFilterClick}
+          >
+            Open Menu
+          </Button>
+          <Menu
+            id="simple-menu"
+            anchorEl={this.state.anchorEl}
+            keepMounted
+            open={Boolean(this.state.anchorEl)}
+            onClose={this.handleRatingFilterClose}
+          >
+            <MenuItem onClick={this.handleRatingFilterClose}>Profile1</MenuItem>
+            <MenuItem onClick={this.handleRatingFilterClose}>
+              My account1
+            </MenuItem>
+            <MenuItem onClick={this.handleRatingFilterClose}>Logout1</MenuItem>
+            <MenuItem onClick={this.handleRatingFilterClose}>Profile1</MenuItem>
+            <MenuItem onClick={this.handleRatingFilterClose}>
+              My account1
+            </MenuItem>
+            <MenuItem onClick={this.handleRatingFilterClose}>Logout1</MenuItem>
+          </Menu>
+        </div>
+      </div>
     );
   }
 }
 
 Filter.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(useStyles)(Filter);
+function mapDispatchToProps(dispatch) {
+  return {
+    getAllMovies: (data) => dispatch(getAllMovies(data)),
+  };
+}
+
+export default connect(null, mapDispatchToProps)(withStyles(useStyles)(Filter));

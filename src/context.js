@@ -40,12 +40,31 @@ class MoviesProvider extends Component {
     this.setState({ loading: null });
   };
 
+  filterMoviesBySearch = query => {
+    this.setState({ loading: true });
+    const url =
+      query == null
+        ? `${apiUrl}/movies`
+        : `${apiUrl}/movies/search?query=${query}`;
+    axios
+      .get(url)
+      .then(res => {
+        this.setState({
+          movies: res.data,
+          loading: false
+        });
+      })
+      .catch(err => console.log(err));
+    this.setState({ loading: null });
+  };
+
   render() {
     return (
       <MovieContext.Provider
         value={{
           ...this.state,
-          filterMoviesByCategory: this.filterMoviesByCategory
+          filterMoviesByCategory: this.filterMoviesByCategory,
+          filterMoviesBySearch: this.filterMoviesBySearch
         }}
       >
         {this.props.children}

@@ -8,10 +8,17 @@ import Movie from "./Movie/Movie";
 import { withStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { apiUrl } from "../../config";
+import AuthHelperMethods from "../../helpers/AuthHelper";
+import withAuth from "../withAuth";
 
 const useStyles = theme => ({
+  cardGrid: {
+    marginTop: "20px",
+    paddingTop: "40px"
+  },
+
   card: {
-    backgroundColor: "#FAF7F2"
+    backgroundColor: "#7F2"
   },
 
   media: {
@@ -29,6 +36,8 @@ const useStyles = theme => ({
 });
 
 class AdminMovies extends React.Component {
+  auth = new AuthHelperMethods();
+
   constructor(props) {
     super(props);
 
@@ -42,8 +51,16 @@ class AdminMovies extends React.Component {
 
   componentDidMount() {
     this.setState({ loading: true });
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    };
+    // Setting Authorization header
+    if (this.auth.loggedIn()) {
+      headers["Authorization"] = this.auth.gettoken();
+    }
     axios
-      .get(`${apiUrl}/movies`)
+      .get(`${apiUrl}/users/movies`, { headers })
       .then(res => {
         this.setState({
           movies: res.data,
@@ -86,6 +103,7 @@ class AdminMovies extends React.Component {
                 key={movie.id}
                 movie={movie}
                 showSneakbar={this.handleFlashMessage}
+                history={this.props.history}
               />
             ))
           ) : (
@@ -103,4 +121,4 @@ AdminMovies.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(useStyles)(AdminMovies);
+export default withAuth(withStyles(useStyles)(AdminMovies));

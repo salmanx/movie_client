@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -13,32 +14,33 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AuthHelperMethods from "../../helpers/AuthHelper";
+import { getMoviesBySearch } from "../../redux/actions/movies";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
   },
 
   title: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
+      display: "block",
+    },
   },
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25)
+      backgroundColor: fade(theme.palette.common.white, 0.25),
     },
     marginRight: 0,
     marginLeft: theme.spacing(3),
     width: "70%",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(9),
-      width: "70%"
-    }
+      width: "70%",
+    },
   },
   searchIcon: {
     width: theme.spacing(7),
@@ -47,31 +49,31 @@ const useStyles = makeStyles(theme => ({
     pointerEvents: "none",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   inputRoot: {
     color: "inherit",
-    width: "100%"
+    width: "100%",
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: "100%"
-    }
+      width: "100%",
+    },
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
-      display: "flex"
-    }
+      display: "flex",
+    },
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      display: "none"
-    }
+      display: "none",
+    },
   },
 
   link: {
@@ -88,8 +90,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     "&:hover": {
       color: "#fff",
-      textDecoration: "none"
-    }
+      textDecoration: "none",
+    },
   },
   menuLink: {
     backgroundColor: "none",
@@ -97,8 +99,8 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       color: "#000",
       backgroundColor: "none",
-      textDecoration: "none"
-    }
+      textDecoration: "none",
+    },
   },
   menuLinkBrand: {
     backgroundColor: "none",
@@ -106,12 +108,12 @@ const useStyles = makeStyles(theme => ({
     "&:hover": {
       color: "#fff",
       backgroundColor: "none",
-      textDecoration: "none"
-    }
-  }
+      textDecoration: "none",
+    },
+  },
 }));
 
-export default function NavBar() {
+function NavBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -119,7 +121,7 @@ export default function NavBar() {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const auth = new AuthHelperMethods();
 
-  const handleProfileMenuOpen = event => {
+  const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -132,8 +134,14 @@ export default function NavBar() {
     handleMobileMenuClose();
   };
 
-  const handleMobileMenuOpen = event => {
+  const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const handleSearch = (event) => {
+    if (event.target.value.length > 3) {
+      props.getMoviesBySearch({ query: event.target.value });
+    } else return;
   };
 
   const menuId = "primary-search-account-menu";
@@ -249,9 +257,12 @@ export default function NavBar() {
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
-                input: classes.inputInput
+                input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
+              onKeyPress={(event) => {
+                handleSearch(event);
+              }}
             />
           </div>
           <div className={classes.grow} />
@@ -288,8 +299,17 @@ export default function NavBar() {
           </div>
         </Toolbar>
       </AppBar>
+
       {renderMobileMenu}
       {renderMenu}
     </div>
   );
 }
+
+function mapDispatchToProps(dispatch) {
+  return {
+    getMoviesBySearch: (data) => dispatch(getMoviesBySearch(data)),
+  };
+}
+
+export default connect(null, mapDispatchToProps)(NavBar);

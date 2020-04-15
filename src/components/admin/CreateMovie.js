@@ -47,6 +47,30 @@ class CreateMovie extends React.Component {
     };
   }
 
+  componentDidMount() {
+    console.log(this.props);
+    if (this.props.history.location.state) {
+      const id = this.props.history.location.state.id;
+      const headers = {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      };
+      // Setting Authorization header
+      if (this.auth.loggedIn()) {
+        headers["Authorization"] = this.auth.gettoken();
+      }
+
+      Axios.get(`${apiUrl}/movies/${id}`, { headers })
+        .then(res => {
+          this.setState({
+            title: res.data.title,
+            text: res.data.text
+          });
+        })
+        .catch(err => console.log(err));
+    }
+  }
+
   handleCreateMovie(e) {
     e.preventDefault();
 
@@ -79,7 +103,7 @@ class CreateMovie extends React.Component {
         { headers }
       )
         .then(response => {
-          this.props.history.push(`/`);
+          this.props.history.push(`/admin/movies`);
         })
         .catch(error => {
           console.log(error);
@@ -119,6 +143,7 @@ class CreateMovie extends React.Component {
                   fullWidth
                   id="title"
                   label="Movie Name"
+                  value={this.state.title || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -130,6 +155,7 @@ class CreateMovie extends React.Component {
                   label="Movie Details"
                   name="text"
                   autoComplete="lname"
+                  value={this.state.text || ""}
                 />
               </Grid>
             </Grid>

@@ -13,7 +13,7 @@ import Home from "./components/home/Home";
 import Signin from "./components/auth/Signin";
 import Signup from "./components/auth/Signup";
 import UserUpdate from "./components/auth/UserUpdate";
-import CreateMovie from "./components/movies/CreateMovie";
+import CreateMovie from "./components/admin/CreateMovie";
 import AdminMovies from "./components/admin/AdminMovies";
 
 class App extends Component {
@@ -29,6 +29,11 @@ class App extends Component {
             <Route path="/users/edit/:id" component={UserUpdate} exact />
             <Route path="/movies/new" component={CreateMovie} exact />
             <Route path="/admin/movies" component={AdminMovies} exact />
+            <Route
+              path="/admin/movies/edit/:id"
+              component={CreateMovie}
+              exact
+            />
             <Route component={Default} />
           </Switch>
           <Footer />
