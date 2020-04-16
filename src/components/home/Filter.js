@@ -7,7 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import axios from "axios";
 import { apiUrl } from "../../config";
 import { withStyles } from "@material-ui/core/styles";
-import { getAllMovies } from "../../redux/actions/movies";
+import { getAllMovies, setSelectedCategory } from "../../redux/actions/movies";
 
 const useStyles = (theme) => ({
   root: {
@@ -65,7 +65,6 @@ class Filter extends React.Component {
   }
 
   handleRatingFilterClick(event) {
-    // setAnchorEl(event.currentTarget);
     this.setState({ anchorEl: event.currentTarget });
   }
 
@@ -77,9 +76,11 @@ class Filter extends React.Component {
     if (category) {
       this.props.getAllMovies({ category: category.id });
       this.setState({ selectedCategory: category });
+      this.props.setSelectedCategory(category);
     } else {
       this.props.getAllMovies();
       this.setState({ selectedCategory: {} });
+      this.props.setSelectedCategory({});
     }
   }
 
@@ -185,6 +186,7 @@ Filter.propTypes = {
 function mapDispatchToProps(dispatch) {
   return {
     getAllMovies: (data) => dispatch(getAllMovies(data)),
+    setSelectedCategory: (data) => dispatch(setSelectedCategory(data)),
   };
 }
 

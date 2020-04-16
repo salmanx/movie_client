@@ -138,10 +138,12 @@ function NavBar(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleSearch = (event) => {
-    if (event.target.value.length > 3) {
-      props.getMoviesBySearch({ query: event.target.value });
-    } else return;
+  const handleSearch = (query) => {
+    if (query.length > 2) {
+      setTimeout(() => {
+        props.getMoviesBySearch({ query: query });
+      }, 3000);
+    }
   };
 
   const menuId = "primary-search-account-menu";
@@ -260,8 +262,8 @@ function NavBar(props) {
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
-              onKeyPress={(event) => {
-                handleSearch(event);
+              onKeyDown={(event) => {
+                handleSearch(event.target.value);
               }}
             />
           </div>

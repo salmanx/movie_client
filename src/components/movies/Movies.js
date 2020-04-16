@@ -8,6 +8,7 @@ import FlashMessage from "../layouts/FlashMessage";
 import Movie from "./movie/Movie";
 import { withStyles } from "@material-ui/core/styles";
 import { getAllMovies } from "../../redux/actions/movies";
+import MoviesPagination from "../layouts/MoviesPagination";
 
 const useStyles = theme => ({
   card: {
@@ -57,7 +58,6 @@ class Movies extends React.Component {
 
   render() {
     const { classes } = this.props;
-
     const data = this.props.movies;
 
     return (
@@ -74,8 +74,8 @@ class Movies extends React.Component {
                 <CircularProgress color="primary" />
               </div>
             </Grid>
-          ) : data.movies.length > 0 ? (
-            data.movies.map(movie => (
+          ) : data.movies.entries.length > 0 ? (
+            data.movies.entries.map(movie => (
               <Movie
                 key={movie.id}
                 movie={movie}
@@ -87,6 +87,12 @@ class Movies extends React.Component {
               <h2>No Movies found</h2>
             </Grid>
           )}
+          { data.movies.total_entries > 9 && (
+            <Grid container justify="center">
+              <MoviesPagination total_pages={data.movies.total_pages} />
+            </Grid>
+          ) }
+
         </Grid>
       </Container>
     );
