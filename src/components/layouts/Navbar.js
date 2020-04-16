@@ -138,11 +138,14 @@ function NavBar(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleSearch = (query) => {
-    if (query.length > 2) {
-      setTimeout(() => {
-        props.getMoviesBySearch({ query: query });
-      }, 3000);
+  const handleSearch = (event) => {
+    if (event.keyCode === 13) {
+      if (event.target.value) {
+        props.getMoviesBySearch({ query: event.target.value });
+        event.target.value = "";
+      } else {
+        props.getMoviesBySearch();
+      }
     }
   };
 
@@ -169,16 +172,6 @@ function NavBar(props) {
         {auth.loggedIn() && (
           <Link to={`/movies/new`} className={classes.menuLink}>
             Create Movie
-          </Link>
-        )}
-      </MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        {auth.loggedIn() && (
-          <Link
-            to={`/users/edit/${auth.currentUser().user_id}`}
-            className={classes.menuLink}
-          >
-            Profile
           </Link>
         )}
       </MenuItem>
@@ -209,14 +202,6 @@ function NavBar(props) {
           <MenuItem onClick={handleMenuClose}>
             <Link to={`/movies/new`} className={classes.menuLink}>
               Create Movie
-            </Link>
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>
-            <Link
-              to={`/users/edit/${auth.currentUser().user_id}`}
-              className={classes.menuLink}
-            >
-              Profile
             </Link>
           </MenuItem>
 
@@ -263,7 +248,7 @@ function NavBar(props) {
               }}
               inputProps={{ "aria-label": "search" }}
               onKeyDown={(event) => {
-                handleSearch(event.target.value);
+                handleSearch(event);
               }}
             />
           </div>

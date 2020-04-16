@@ -1,9 +1,9 @@
 import axios from "axios";
-// import config from '../config';
+import { apiUrl } from "../config";
 
 function getIRequestProp(severType, isMultipart) {
-  const serverUrl = "http://localhost:3000/";
-  // const token = JSON.parse(localStorage.getItem('accessToken'));
+  const serverUrl = `${apiUrl}/`;
+  // const token = JSON.parse(localStorage.getItem('token'));
   return {
     serverUrl: serverUrl,
     requestHeader: {

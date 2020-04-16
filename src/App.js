@@ -12,7 +12,6 @@ import Default from "./components/Default";
 import Home from "./components/home/Home";
 import Signin from "./components/auth/Signin";
 import Signup from "./components/auth/Signup";
-import UserUpdate from "./components/auth/UserUpdate";
 import CreateMovie from "./components/admin/CreateMovie";
 import AdminMovies from "./components/admin/AdminMovies";
 
@@ -26,7 +25,6 @@ class App extends Component {
             <Route path="/" component={Home} exact />
             <Route path="/signin" component={Signin} exact />
             <Route path="/signup" component={Signup} exact />
-            <Route path="/users/edit/:id" component={UserUpdate} exact />
             <Route path="/movies/new" component={CreateMovie} exact />
             <Route path="/admin/movies" component={AdminMovies} exact />
             <Route
