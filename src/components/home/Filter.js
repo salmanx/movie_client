@@ -5,11 +5,16 @@ import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import axios from "axios";
+import Rater from "react-rater";
 import { apiUrl } from "../../config";
 import { withStyles } from "@material-ui/core/styles";
-import { getAllMovies, setSelectedCategory } from "../../redux/actions/movies";
+import {
+  getAllMovies,
+  setSelectedCategory,
+  setSelectedRating
+} from "../../redux/actions/movies";
 
-const useStyles = (theme) => ({
+const useStyles = theme => ({
   root: {
     display: "flex",
     backgroundColor: "#ddd",
@@ -19,17 +24,17 @@ const useStyles = (theme) => ({
     paddingBottom: "30px",
     flexWrap: "wrap",
     "& > *": {
-      margin: theme.spacing(0.5),
-    },
+      margin: theme.spacing(0.5)
+    }
   },
   btn: {
     "&:focus": {
       backgroundColor: theme.palette.primary.main,
       "& .MuiListItemIcon-root, & .MuiListItemText-primary": {
-        color: theme.palette.common.white,
-      },
-    },
-  },
+        color: theme.palette.common.white
+      }
+    }
+  }
 });
 
 class Filter extends React.Component {
@@ -41,6 +46,7 @@ class Filter extends React.Component {
       anchorEl: null,
       categories: [],
       selectedCategory: {},
+      setSelectedRating: null
     };
 
     this.handleCategoryMenuClick = this.handleCategoryMenuClick.bind(this);
@@ -60,7 +66,7 @@ class Filter extends React.Component {
     this.setState({ anchorCatEl: null });
   }
 
-  handleCategoryMenuItemClick(index) {
+  handleCategoryMenuItemClick() {
     this.setState({ anchorCatEl: null });
   }
 
@@ -74,25 +80,47 @@ class Filter extends React.Component {
 
   filterMoviesByCategory(category) {
     if (category) {
-      this.props.getAllMovies({ category: category.id });
+      this.props.getAllMovies({
+        category: category.id,
+        rating: this.props.movies.setSelectedRating
+      });
       this.setState({ selectedCategory: category });
       this.props.setSelectedCategory(category);
     } else {
-      this.props.getAllMovies();
+      this.props.getAllMovies({
+        rating: this.props.movies.setSelectedRating
+      });
       this.setState({ selectedCategory: {} });
       this.props.setSelectedCategory({});
+    }
+  }
+
+  filterMoviesByRating(rating) {
+    if (rating) {
+      this.props.getAllMovies({
+        rating: rating,
+        category: this.props.movies.selectedCategory.id
+      });
+      this.setState({ setSelectedRating: rating });
+      this.props.setSelectedRating(rating);
+    } else {
+      this.props.getAllMovies({
+        category: this.props.movies.selectedCategory.id
+      });
+      this.setState({ setSelectedRating: null });
+      this.props.setSelectedRating(null);
     }
   }
 
   componentDidMount() {
     axios
       .get(`${apiUrl}/categories`)
-      .then((res) => {
+      .then(res => {
         this.setState({
-          categories: res.data,
+          categories: res.data
         });
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   }
 
   render() {
@@ -109,8 +137,8 @@ class Filter extends React.Component {
               className="classes.btn"
               onClick={this.handleCategoryMenuClick}
             >
-              {Object.keys(this.state.selectedCategory).length
-                ? this.state.selectedCategory.name
+              {Object.keys(this.props.movies.selectedCategory).length
+                ? this.props.movies.selectedCategory.name
                 : "Category"}
             </Button>
             <Menu
@@ -121,7 +149,7 @@ class Filter extends React.Component {
               onClose={this.handleCategoryMenuClose}
             >
               <MenuItem
-                onClick={(e) => {
+                onClick={e => {
                   this.handleCategoryMenuClose();
                   this.filterMoviesByCategory(null);
                 }}
@@ -131,14 +159,14 @@ class Filter extends React.Component {
               {this.state.categories.map((cat, index) => (
                 <MenuItem
                   onClick={() => {
-                    this.handleCategoryMenuItemClick(index + 1);
+                    this.handleCategoryMenuItemClick();
                     this.filterMoviesByCategory(cat);
                   }}
                   key={cat.id}
                   value={cat.id}
                   name="category"
                 >
-                  {cat.name} ({cat.total_movies})
+                  {cat.name}
                 </MenuItem>
               ))}
             </Menu>
@@ -153,7 +181,15 @@ class Filter extends React.Component {
             className="classes.btn"
             onClick={this.handleRatingFilterClick}
           >
-            Open Menu
+            {this.props.movies.setSelectedRating ? (
+              <Rater
+                total={5}
+                rating={this.props.movies.setSelectedRating}
+                interactive={false}
+              />
+            ) : (
+              "Rating"
+            )}
           </Button>
           <Menu
             id="simple-menu"
@@ -162,16 +198,55 @@ class Filter extends React.Component {
             open={Boolean(this.state.anchorEl)}
             onClose={this.handleRatingFilterClose}
           >
-            <MenuItem onClick={this.handleRatingFilterClose}>Profile1</MenuItem>
-            <MenuItem onClick={this.handleRatingFilterClose}>
-              My account1
+            <MenuItem
+              onClick={() => {
+                this.handleRatingFilterClose();
+                this.filterMoviesByRating(null);
+              }}
+            >
+              All
             </MenuItem>
-            <MenuItem onClick={this.handleRatingFilterClose}>Logout1</MenuItem>
-            <MenuItem onClick={this.handleRatingFilterClose}>Profile1</MenuItem>
-            <MenuItem onClick={this.handleRatingFilterClose}>
-              My account1
+
+            <MenuItem
+              onClick={() => {
+                this.handleRatingFilterClose();
+                this.filterMoviesByRating(5);
+              }}
+            >
+              <Rater total={5} rating={5} interactive={false} />
             </MenuItem>
-            <MenuItem onClick={this.handleRatingFilterClose}>Logout1</MenuItem>
+            <MenuItem
+              onClick={() => {
+                this.handleRatingFilterClose();
+                this.filterMoviesByRating(4);
+              }}
+            >
+              <Rater total={5} rating={4} interactive={false} />
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                this.handleRatingFilterClose();
+                this.filterMoviesByRating(3);
+              }}
+            >
+              <Rater total={5} rating={3} interactive={false} />
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                this.handleRatingFilterClose();
+                this.filterMoviesByRating(2);
+              }}
+            >
+              <Rater total={5} rating={2} interactive={false} />
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                this.handleRatingFilterClose();
+                this.filterMoviesByRating(1);
+              }}
+            >
+              <Rater total={5} rating={1} interactive={false} />
+            </MenuItem>
           </Menu>
         </div>
       </div>
@@ -180,14 +255,24 @@ class Filter extends React.Component {
 }
 
 Filter.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-function mapDispatchToProps(dispatch) {
+function mapStateToProps(state) {
   return {
-    getAllMovies: (data) => dispatch(getAllMovies(data)),
-    setSelectedCategory: (data) => dispatch(setSelectedCategory(data)),
+    movies: state.movieReducer
   };
 }
 
-export default connect(null, mapDispatchToProps)(withStyles(useStyles)(Filter));
+function mapDispatchToProps(dispatch) {
+  return {
+    getAllMovies: data => dispatch(getAllMovies(data)),
+    setSelectedCategory: data => dispatch(setSelectedCategory(data)),
+    setSelectedRating: data => dispatch(setSelectedRating(data))
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(useStyles)(Filter));

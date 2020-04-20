@@ -6,6 +6,11 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 import Axios from "axios";
 import AuthHelperMethods from "../../helpers/AuthHelper";
 import withAuth from "../withAuth";
@@ -30,6 +35,17 @@ const useStyles = theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
+  },
+  formControl: {
+    margin: theme.spacing(0, 0, 2, 0),
+    width: "100%"
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2)
+  },
+  error: {
+    width: "100%",
+    margin: theme.spacing(2, 0, -3, 0),
   }
 });
 
@@ -43,12 +59,14 @@ class CreateMovie extends React.Component {
     this.state = {
       title: null,
       text: null,
+      category: null,
+      categories: [],
       user: {}
     };
   }
 
   componentDidMount() {
-    console.log(this.props);
+    this.fetchAllCategories();
     if (this.props.history.location.state) {
       const id = this.props.history.location.state.id;
       const headers = {
@@ -64,17 +82,37 @@ class CreateMovie extends React.Component {
         .then(res => {
           this.setState({
             title: res.data.title,
-            text: res.data.text
+            text: res.data.text,
+            category: res.data.category.id
           });
         })
         .catch(err => console.log(err));
     }
   }
 
+  fetchAllCategories = () => {
+    Axios.get(`${apiUrl}/categories`)
+      .then(res => {
+        this.setState({
+          categories: res.data
+        });
+      })
+      .catch(err => console.log(err));
+  };
+
+  handleChange = event => {
+    console.log(event.target.value);
+    this.setState({
+      category: event.target.value
+    });
+  };
+
   handleCreateMovie(e) {
     e.preventDefault();
 
-    if (!e.target.elements.title.value) {
+    if (!this.state.category) {
+      this.setState({ error: "Please select a category" });
+    } else if (!e.target.elements.title.value) {
       this.setState({ error: "Please provide movie title" });
     } else if (!e.target.elements.text.value) {
       this.setState({ error: "Please provide movie details" });
@@ -95,7 +133,7 @@ class CreateMovie extends React.Component {
         `${apiUrl}/movies`,
         {
           movie: {
-            category_id: 1,
+            category_id: this.state.category,
             title,
             text
           }
@@ -126,24 +164,45 @@ class CreateMovie extends React.Component {
           <Typography component="h1" variant="h5">
             Create a movie here!
           </Typography>
+
           {this.state.error && (
+          <div className={classes.error}>  
             <p className="alert alert-danger">{this.state.error}</p>
+            </div>
           )}
           <form
             className={classes.form}
             noValidate
             onSubmit={this.handleCreateMovie}
           >
+            <FormControl className={classes.formControl}>
+              <InputLabel id="demo-simple-select-label">
+                Select Category
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={this.state.category || ""}
+                onChange={this.handleChange}
+              >
+                {this.state.categories &&
+                  this.state.categories.map(cat => (
+                    <MenuItem value={cat.id} key={cat.id}>{cat.name}</MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  name="title"
                   variant="outlined"
                   required
                   fullWidth
                   id="title"
                   label="Movie Name"
                   value={this.state.title || ""}
+                  onChange={e => this.setState({ title: e.target.value })}
+
+                  // defaultValue={this.state.title || ""}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -153,9 +212,10 @@ class CreateMovie extends React.Component {
                   fullWidth
                   id="text"
                   label="Movie Details"
-                  name="text"
                   autoComplete="lname"
                   value={this.state.text || ""}
+                  onChange={e => this.setState({ text: e.target.value })}
+                  // defaultValue={this.state.text || ""}
                 />
               </Grid>
             </Grid>

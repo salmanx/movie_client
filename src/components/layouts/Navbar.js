@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -8,39 +8,43 @@ import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AuthHelperMethods from "../../helpers/AuthHelper";
-import { getMoviesBySearch } from "../../redux/actions/movies";
+import {
+  getMoviesBySearch,
+  getAllMovies,
+  setSelectedCategory,
+  setSelectedRating
+} from "../../redux/actions/movies";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   grow: {
-    flexGrow: 1,
+    flexGrow: 1
   },
 
   title: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
-      display: "block",
-    },
+      display: "block"
+    }
   },
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+      backgroundColor: fade(theme.palette.common.white, 0.25)
     },
     marginRight: 0,
     marginLeft: theme.spacing(3),
     width: "70%",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(9),
-      width: "70%",
-    },
+      width: "70%"
+    }
   },
   searchIcon: {
     width: theme.spacing(7),
@@ -49,31 +53,31 @@ const useStyles = makeStyles((theme) => ({
     pointerEvents: "none",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   inputRoot: {
     color: "inherit",
-    width: "100%",
+    width: "100%"
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: "100%",
-    },
+      width: "100%"
+    }
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
-      display: "flex",
-    },
+      display: "flex"
+    }
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      display: "none",
-    },
+      display: "none"
+    }
   },
 
   link: {
@@ -90,8 +94,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     "&:hover": {
       color: "#fff",
-      textDecoration: "none",
-    },
+      textDecoration: "none"
+    }
   },
   menuLink: {
     backgroundColor: "none",
@@ -99,8 +103,8 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       color: "#000",
       backgroundColor: "none",
-      textDecoration: "none",
-    },
+      textDecoration: "none"
+    }
   },
   menuLinkBrand: {
     backgroundColor: "none",
@@ -108,9 +112,10 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       color: "#fff",
       backgroundColor: "none",
-      textDecoration: "none",
+      textDecoration: "none"
     },
-  },
+    cursor: "pointer"
+  }
 }));
 
 function NavBar(props) {
@@ -121,7 +126,7 @@ function NavBar(props) {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const auth = new AuthHelperMethods();
 
-  const handleProfileMenuOpen = (event) => {
+  const handleProfileMenuOpen = event => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -134,11 +139,11 @@ function NavBar(props) {
     handleMobileMenuClose();
   };
 
-  const handleMobileMenuOpen = (event) => {
+  const handleMobileMenuOpen = event => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleSearch = (event) => {
+  const handleSearch = event => {
     if (event.keyCode === 13) {
       if (event.target.value) {
         props.getMoviesBySearch({ query: event.target.value });
@@ -147,6 +152,13 @@ function NavBar(props) {
         props.getMoviesBySearch();
       }
     }
+  };
+
+  const redirectToHome = () => {
+    props.setSelectedCategory({});
+    props.setSelectedRating(null);
+    props.getAllMovies();
+    return <Redirect to="/" />;
   };
 
   const menuId = "primary-search-account-menu";
@@ -223,19 +235,15 @@ function NavBar(props) {
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
+          <div
+            className={classes.menuLinkBrand}
+            role="button"
+            onClick={redirectToHome}
           >
-            <MenuIcon />
-          </IconButton>
-          <Link to="/" className={classes.menuLinkBrand}>
             <Typography className={classes.title} variant="h6" noWrap>
               FMovie
             </Typography>
-          </Link>
+          </div>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
@@ -244,10 +252,10 @@ function NavBar(props) {
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
-                input: classes.inputInput,
+                input: classes.inputInput
               }}
               inputProps={{ "aria-label": "search" }}
-              onKeyDown={(event) => {
+              onKeyDown={event => {
                 handleSearch(event);
               }}
             />
@@ -295,7 +303,10 @@ function NavBar(props) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    getMoviesBySearch: (data) => dispatch(getMoviesBySearch(data)),
+    getMoviesBySearch: data => dispatch(getMoviesBySearch(data)),
+    getAllMovies: data => dispatch(getAllMovies(data)),
+    setSelectedCategory: data => dispatch(setSelectedCategory(data)),
+    setSelectedRating: data => dispatch(setSelectedRating(data))
   };
 }
 

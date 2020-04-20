@@ -7,9 +7,6 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
-
-import Typography from "@material-ui/core/Typography";
-import { createHashHistory } from "history";
 import Rater from "react-rater";
 import "react-rater/lib/react-rater.css";
 import axios from "axios";
@@ -63,7 +60,6 @@ class Movie extends React.Component {
   };
 
   deleteMovie = movieId => {
-    console.log(movieId);
 
     const headers = {
       Accept: "application/json",
@@ -81,11 +77,11 @@ class Movie extends React.Component {
         })
         .then(response => {
           this.props.history.push("/admin/movies");
+          window.location.reload();
         })
         .catch(error => {
           console.log(error);
         });
-      this.props.history.push("/admin/movies");
     } else {
       return;
     }

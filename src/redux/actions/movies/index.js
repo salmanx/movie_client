@@ -1,4 +1,9 @@
-import { MOVIES, MOVIES_SEARCH, SELECTED_CATEGORY } from "../../constants/movies";
+import {
+  MOVIES,
+  MOVIES_SEARCH,
+  SELECTED_CATEGORY,
+  SELECTED_RATING
+} from "../../constants/movies";
 
 export function getAllMovies(body = {}) {
   return {
@@ -14,9 +19,16 @@ export function getMoviesBySearch(body = {}) {
   };
 }
 
-export function setSelectedCategory(body={}) {
+export function setSelectedCategory(body = {}) {
   return {
     type: SELECTED_CATEGORY,
+    body
+  };
+}
+
+export function setSelectedRating(body = {}) {
+  return {
+    type: SELECTED_RATING,
     body
   };
 }

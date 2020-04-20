@@ -56,6 +56,16 @@ class Movies extends React.Component {
     );
   };
 
+  handleRating = () => {
+    const category = this.props.movies.selectedCategory.id;
+    const page = this.props.movies.movies.current_page;
+
+    this.props.getAllMovies({
+      category: category,
+      page: page
+    });
+  };
+
   render() {
     const { classes } = this.props;
     const data = this.props.movies;
@@ -80,6 +90,7 @@ class Movies extends React.Component {
                 key={movie.id}
                 movie={movie}
                 showSneakbar={this.handleFlashMessage}
+                rate={this.handleRating}
               />
             ))
           ) : (
@@ -87,12 +98,11 @@ class Movies extends React.Component {
               <h2>No Movies found</h2>
             </Grid>
           )}
-          { data.movies.total_entries > 9 && (
+          {data.movies.total_entries > 9 && (
             <Grid container justify="center">
               <MoviesPagination total_pages={data.movies.total_pages} />
             </Grid>
-          ) }
-
+          )}
         </Grid>
       </Container>
     );
@@ -111,7 +121,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    getAllMovies: () => dispatch(getAllMovies())
+    getAllMovies: data => dispatch(getAllMovies(data))
   };
 }
 

@@ -17,22 +17,28 @@ function Moviepaginator(props) {
   const [page, setPage] = React.useState(1);
   const handleChange = (event, value) => {
     setPage(value);
-    props.getAllMovies({ page: value, category: props.movies.selectedCategory.id })
+    props.getAllMovies({
+      page: value,
+      category: props.movies.selectedCategory.id,
+      rating: props.movies.setSelectedRating
+    });
   };
   return (
     <div className={classes.root}>
-      <Pagination count={props.total_pages} color="primary" onChange={handleChange} />
+      <Pagination
+        count={props.total_pages}
+        color="primary"
+        onChange={handleChange}
+      />
     </div>
   );
 }
-
 
 function mapStateToProps(state) {
   return {
     movies: state.movieReducer
   };
 }
-
 
 function mapDispatchToProps(dispatch) {
   return {

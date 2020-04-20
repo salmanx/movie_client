@@ -7,7 +7,6 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Typography from "@material-ui/core/Typography";
-import { createHashHistory } from "history";
 import Rater from "react-rater";
 import "react-rater/lib/react-rater.css";
 import Axios from "axios";
@@ -53,41 +52,37 @@ class Movie extends React.Component {
   }
 
   handleRating = (rating, movieId) => {
-    console.log(rating);
+    if (!this.auth.loggedIn()) {
+      this.props.showSneakbar("requiredAuth");
+      return;
+    }
 
-    // rating.target.classList.add("is-active");
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    };
+    // Setting Authorization header
+    if (this.auth.loggedIn()) {
+      headers["Authorization"] = this.auth.gettoken();
+    }
 
-    // if (!this.auth.loggedIn()) {
-    //   this.props.showSneakbar("requiredAuth");
-    //   return;
-    // }
-    //
-    // const headers = {
-    //   Accept: "application/json",
-    //   "Content-Type": "application/json"
-    // };
-    // // Setting Authorization header
-    // if (this.auth.loggedIn()) {
-    //   headers["Authorization"] = this.auth.gettoken();
-    // }
-    //
-    // Axios.post(
-    //   `${apiUrl}/rating`,
-    //   {
-    //     rating: {
-    //       movie_id: movieId,
-    //       rating: rating.rating
-    //     }
-    //   },
-    //   { headers }
-    // )
-    //   .then(response => {
-    //     this.props.showSneakbar();
-    //     rating.target.classList.add("is-active");
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   });
+    Axios.post(
+      `${apiUrl}/rating`,
+      {
+        rating: {
+          movie_id: movieId,
+          rating: rating.rating
+        }
+      },
+      { headers }
+    )
+      .then(response => {
+        this.props.showSneakbar();
+        this.props.rate();
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   render() {
@@ -107,14 +102,12 @@ class Movie extends React.Component {
         />
         <CardMedia
           className={classes.media}
-          image="https://avatars1.githubusercontent.com/u/3165635?s=460&v=4"
+          image="https://placehold.it/300x300.png"
           title="Paella dish"
         />
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
-            {movie.id} || {movie.rating} This impressive paella is a perfect
-            party dish and a fun meal to cook together with your guests. Add 1
-            cup of frozen peas along with the mussels, if you like.
+            {movie.text}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
