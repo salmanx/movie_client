@@ -68,8 +68,8 @@ class Signup extends React.Component {
 
       Axios.post(`${apiUrl}/sign_up`, {
         user: {
-          firstName,
-          lastName,
+          first_name: firstName,
+          last_name: lastName,
           email,
           password
         }
