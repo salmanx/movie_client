@@ -1,1 +1,1 @@
-export const apiUrl = "https://evening-shore-61360.herokuapp.com/api";
+export const apiUrl = "http://localhost:3000/api/";
